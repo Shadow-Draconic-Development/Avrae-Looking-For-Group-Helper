@@ -92,3 +92,6 @@ Two options:
 ### response_req
 - Default: Off
 - Requires players to give a response. I.e. lfg \<insert response here>
+
+## How to view settings
+Simply put in `alias setting <page_num/setting_name>` (leaving blank shows all settings on seperate pages)
