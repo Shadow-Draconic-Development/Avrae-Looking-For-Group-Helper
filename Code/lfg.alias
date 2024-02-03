@@ -373,13 +373,13 @@ def main(input_list: list[str]) -> str:
         pass
     
     else:
-        thumb = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/lfg/image.png"
+        thumb = "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png"
 
     if svar_dict['response_req'] == 0 or len(input_list) > 0:
         pass
 
     else:
-        return f"{ctx.author.display_name} has encountered an error", "You are required to give a quest suggestion/response", thumb, "#CC0202"
+        return f"You Have Been Sneak Attacked by an Error", "You are required to give a quest suggestion/response", thumb, "#CC0202"
 
     f = [
         "**Quest:** " + " ".join(input_list)
@@ -493,4 +493,4 @@ l = "<"
 -f "{{f}}"
 -thumb "{{thumb}}"
 -color "{{color}}"
--footer "!lfg {{l}}phrase> | Updated 11/24/23 | ShadowsStride"
+-footer "{{ctx.prefix}}lfg {{l}}phrase> | 2/3/24 | ShadowsStride"
