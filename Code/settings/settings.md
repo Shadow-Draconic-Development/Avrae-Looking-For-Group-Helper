@@ -1,6 +1,6 @@
 <h1>Settings Subalias<img align="right" src="../../Data/image.png" width="100px"></h1>
 
-This LFG alias allows you to customize what is being shown whenever a player runs the alias, if you do not alter any settings (or don't alter settings properly), they do have default values.
+This subalias allows you to customize what is being shown whenever a player runs the alias, if you do not alter any settings (or don't alter settings properly), they do have default values.
 
 ## How to edit settings
 
