@@ -153,7 +153,7 @@ def display_settings(page_num: int, svar_dict: dict, default_settings: dict, set
     else:
         pass
 
-    return f"{ctx.prefix}embed -title 'Looking For Group Settings' -f '{output_str}' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png' -color '{color}' -footer '{ctx.prefix}lfg settings | 2/3/24 | ShadowsStride'", svar_string 
+    return f"{ctx.prefix}embed -title 'Looking For Group Settings' -f '{output_str}' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png' -color '{color}' -footer '{ctx.prefix}lfg settings | 2/4/24 | ShadowsStride'", svar_string 
 
 def edit_settings(change_dict: dict, svar_dict: dict, default_settings: dict) -> tuple(str,str):
     """
@@ -343,7 +343,7 @@ def edit_settings(change_dict: dict, svar_dict: dict, default_settings: dict) ->
         else:
             pass
 
-    return f"{ctx.prefix}embed -title 'Changing Looking For Group Settings' -f '" + "\n".join(change_list) + f"' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png' -color '{color}' -footer '{ctx.prefix}lfg settings <#/setting name> | 2/3/24 | ShadowsStride'", f"{ctx.prefix}svar lfg_settings {dump_json(svar_dict)}"
+    return f"{ctx.prefix}embed -title 'Changing Looking For Group Settings' -f '" + "\n".join(change_list) + f"' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png' -color '{color}' -footer '{ctx.prefix}lfg settings <#/setting name> | 2/4/24 | ShadowsStride'", f"{ctx.prefix}svar lfg_settings {dump_json(svar_dict)}"
 
                         
 def main(input_list: list[str]) -> tuple(str, str):

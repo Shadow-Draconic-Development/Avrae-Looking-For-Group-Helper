@@ -35,4 +35,3 @@ All requests can be viewed at this  [link.](https://docs.google.com/spreadsheets
 You can click the button below to view my ko-fi and patreon page. Donations like this help me write more aliases and donators do get priority on feature requests.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F2F6MG4NH) [Patreon](https://www.patreon.com/bePatron?u=47388431) 
-

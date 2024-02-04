@@ -52,7 +52,7 @@ Two options:
 
 ### player (Player is mentioned)
 - Default: Off
-- This detemines whether or not the player is mentioned. Automatically changes if the player changes their display name.
+- This determines whether or not the player is mentioned. Automatically changes if the player changes their display name.
 
 ### ac
 - Default: Off
@@ -95,4 +95,4 @@ Two options:
 - Requires players to give a response. I.e. lfg \<insert response here>
 
 ## How to view settings
-Simply put in `alias setting <page_num/setting_name>` (leaving blank shows all settings on seperate pages)
+Simply put in `alias setting <page_num/setting_name>` (leaving blank shows all settings on separate pages)
