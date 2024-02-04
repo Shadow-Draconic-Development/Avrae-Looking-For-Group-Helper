@@ -18,6 +18,7 @@ Looking For Group allows players to more readily search for groups in various di
 See [Settings](https://github.com/Shadow-Draconic-Development/Avrae-Looking-For-Group-Helper/blob/main/Code/settings/settings.md) for more details.
 
 [Table of Contents](https://github.com/Shadow-Draconic-Development/Avrae-Looking-For-Group-Helper/blob/main/ToC.md)
+[Shadow's Main Website](https://shadow-draconic-development.github.io/.github/)
 
 ## License Notice
 
