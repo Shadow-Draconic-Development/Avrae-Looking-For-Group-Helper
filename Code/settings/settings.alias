@@ -47,172 +47,319 @@ def set_default_settings(dictionary: dict, default_dictionary: dict) -> dict:
 
 
 def display_settings(page_num: int, svar_dict: dict, default_settings: dict, settings_name: str|None = None, message: str = "", svar_string: str = "", color: str = "") -> tuple(str, str):
+    """
+    Displays the settings requested
 
-    if settings_name != "None":
+    Args:
+        page_num (int): Page number
+        svar_dict (dict): Server dictionary
+        default_settings (dict): Default settings dictionary
+        settings_name (str|None): Name of setting requested (Default: None)
+        message (str): Error message (Default: "")
+        svar_string (str): Unused svar_string (Default: "")
+        color (str): Border color (Default: "")
+
+    Return:
+        str: Embed output string
+        str: SVAR edit string
+    """
+
+    # If settings name is given, use settings name
+    if settings_name:
         settings_name_list = [settings_name]
 
+    # If settings name is given, use all settings names
     else:
         settings_name_list = list(svar_dict.keys())
 
-
+    # Output list
     output_str_list = []
     
-
+    # For each setting
     for settings_name in settings_name_list:
+
+        # Create temporary list and add setting name
         temp_str_list = []
         temp_str_list.append(f"**Setting:** {settings_name}")
 
-        if settings_name != "color_level":
+        # If setting is not color_lvl
+        if settings_name != "color_lvl":
 
+            # If current setting is False
             if svar_dict[settings_name] == 0:
                 temp_str_list.append(f"**Current Setting:** False")
 
+            # If current setting is True
             else:
                 temp_str_list.append(f"**Current Setting:** True")
 
+            # If default setting is False
             if default_settings[settings_name] == 0:
                 temp_str_list.append(f"**Default Setting:** False")
 
+            # If default setting is True
             else:
                 temp_str_list.append(f"**Default Setting:** True")
 
+        # If setting is color_lvl
         else:
-            for level, color in svar_dict["color_level"].items():
-                temp_str_list.append(f"Level {level}: {color}")
 
+            # Outputs all color information
+            for level, color in svar_dict["color_lvl"].items():
+                temp_str_list.append(f"**Level {level}:** {color}")
+
+        # Add contents to output list
         output_str_list.append("\n".join(temp_str_list))
 
+    # Get length of output list
     length = len(output_str_list)
 
+
     match page_num:
+
+        # If page_num is below bounds
         case c if c < 1:
             page_num = 1
 
+        # If page_num is above bounds
         case c if c > length:
             page_num = length
 
+        # If page_num is within bounds
         case _:
             pass
 
+    # If there are more than one entry
     if length != 1:
         output_str = f"**Settings (Page {page_num}/{length}):**\n\n" + output_str_list[page_num - 1]
 
+    # If there is only one entry
     else:
-        output_str = f"**Settings:**\n\n" + output_str_list[0]
+        output_str = output_str_list[0]
 
+    # If no error message
     if message == "":
         pass
 
+    # If there is an error message
     else:
         output_str = f"`{message}`\n{output_str}"
 
+    # If color is not yet defined
     if color == "":
-        color = randchoice(list(svar_dict["color_level"]))
+        color = randchoice(list(svar_dict["color_lvl"].values()))
 
+    # If color is defined
     else:
         pass
 
-    return f"{ctx.prefix}embed -title Looking For Group Settings -f {output_str} -thumb https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png -color {color} -footer {ctx.prefix}lfg settings | 2/3/24 | ShadowsStride", svar_string 
+    return f"{ctx.prefix}embed -title 'Looking For Group Settings' -f '{output_str}' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png' -color '{color}' -footer '{ctx.prefix}lfg settings | 2/3/24 | ShadowsStride'", svar_string 
 
 def edit_settings(change_dict: dict, svar_dict: dict, default_settings: dict) -> tuple(str,str):
+    """
+    Edits the setting requested
 
-    def is_default_value(setting_name: str, setting_value: int|dict, default_settings: dict):
+    Args:
+        change_dict (dict): Dictionary of changes
+        svar_dict (dict): Server dictionary
+        default_settings (dict): Default settings dictionary
+    
+    Return:
+        str: Embed output string
+        str: SVAR edit string
+    """
+
+    def is_default_value(setting_name: str, setting_value: int|dict, default_settings: dict) -> bool:
+        """
+        Checks if item is default setting
+
+        Args:
+            setting_name (str): Name of setting
+            setting_value (int|dict): Value of setting
+            default_settings (dict): Default settings dictionary
+        
+        Return:
+            bool: If default value is being used
+        
+        """
+
+				# If settings are default
         if default_settings[setting_name] == setting_value:
             return True
 
+				# If settings are not default 
         else:
             return False
 
+		# Set error status to false
     error = False
+
+		# Create change list
+		change_list = []
+
+		# For each setting being changed
     for setting_name, setting_new_value in change_dict.items():
-        change_list = []
 
+				# Mapping for values
+        value_map = {
+            "0": "False",
+            "1": "True"
+        }
 
-
-        if setting_new_value != "clear":
+				# If input was 'clear', remove item from SVAR
+        if setting_new_value.lower() == "clear":
             temp_entry = svar_dict.pop(setting_name)
 
-            
+            # Add change to change list
             change_list.append(f"**{setting_name}**\n**Former Value:** {temp_entry}\n**New Value:** {default_settings[setting_name]}")
 
+				# If input was not 'clear'
         else:
 
+						# If setting is not 'color_lvl'
             if setting_name != "color_lvl":
+
+								# If entry was to set setting to 0
                 if (search_result := search_list(setting_new_value, ["0", "No", "False", "Off"])):
+
+										# If default value, remove entry and output result
                     if is_default_value(setting_name, 0, default_settings):
                         temp_entry = svar_dict.pop(setting_name)
+                        
+                        change_list.append(f"**{setting_name}**\n**Former Value:** {value_map[str(temp_entry)]}\n**New Value:** False")
 
-                        change_list.append(f"**{setting_name}**\n**Former Value:** {temp_entry}\n**New Value:** 0")
-
+										# If not default value, set value to 0 and output results
                     else:
                         temp_entry = svar_dict[setting_name]
 
                         svar_dict[setting_name] = 0
-                        change_list.append(f"**{setting_name}**\n**Former Value:** {temp_entry}\n**New Value:** 0")
+                        change_list.append(f"**{setting_name}**\n**Former Value:** {value_map[str(temp_entry)]}\n**New Value:** False")
 
+								# If entry was to set setting to 1
                 elif (search_result := search_list(setting_new_value, ["1", "Yes", "True", "On"])):
+
+										# If default value, remove entry and output result
                     if is_default_value(setting_name, 1, default_settings):
                         temp_entry = svar_dict.pop(setting_name)
 
-                        change_list.append(f"**{setting_name}**\n**Former Value:** {temp_entry}\n**New Value:** 1")
+                        change_list.append(f"**{setting_name}**\n**Former Value:** {value_map[str(temp_entry)]}\n**New Value:** True")
 
+										# If not default value, set value to 1 and output results 
                     else:
                         temp_entry = svar_dict[setting_name]
 
                         svar_dict[setting_name] = 1
-                        change_list.append(f"**{setting_name}**\n**Former Value:** {temp_entry}\n**New Value:** 1")
+                        change_list.append(f"**{setting_name}**\n**Former Value:** {value_map[str(temp_entry)]}\n**New Value:** True")
 
+								# If invalid input, set error to True, add error to output
                 else:
                     error = True
 
                     change_list.append(f"Problems editing {setting_name}, check input value")
 
+						# If setting is 'color_lvl'
             else:
+
+								# Attempt to parse input
                 try:
+
+										# Split up inputs 
                     value_list = setting_new_value.split(",")
 
+										# Create dictionary
                     value_dict = {}
+
+										# For each value pair
                     for value_pair in value_list:
-                        if "|" in value_pair:
+
+												# If value pair is default entry
+												if value_pair.strip() == "0|":
+													value_dict["0"] = ""
+
+												# If '|' in input
+                        elif "|" in value_pair:
+
+														# Parse input further into level, color hex objects (discarding any other value)
                             item1, item2, *_ = value_pair.split("|")
 
-                            if "#" in item2:
+														# If # is at the beginning of hex code
+                            if item2[0] == "#":
                                 pass
 
+														# If # is not at the beginning of hex code, add it
                             else:
-                                item2 = f"#{item2}"
+                                item2 = f"#{item2.strip()}"
 
-                            value_dict[item1.strip()] = item2.strip()
+														# Update value_dict
+                            value_dict[item1.strip()] = item2
 
+												# If '|' not in input
                         else:
                             pass
 
+										# If default value, remove entry and output result
                     if is_default_value("color_lvl", value_dict, default_settings):
                         temp_entry = svar_dict.pop("color_lvl")
 
-                        change_list.append(f"**{setting_name}**\n**Former Value:** {temp_entry}\n**New Value:** {default_settings['color_lvl']}")
+                        change_list.append(f"**{setting_name}**\n**Former Value:** {str(temp_entry)}\n**New Value:** {str(default_settings['color_lvl'])}")
 
+										# If not default value, set value to new value and output result
                     else:
                         temp_entry = svar_dict["color_lvl"]
 
                         svar_dict["color_lvl"] = value_dict
 
-                        change_list.append(f"**color_lvl**\n**Former Value:** {temp_entry}\n**New Value:** {svar_dict['color_lvl']}")
+                        change_list.append(f"**color_lvl**\n**Former Value:** `{dump_json(temp_entry)}`\n**New Value:** `{dump_json(svar_dict['color_lvl'])}`")
 
+								# If there was an error editing the color_lvl
                 except:
-                    change_list.append("Problems editing color_lvl, verify input follows <#>|<hexcode>,<#>|<hexcode> pattern")
+                    change_list.append("Problems editing color_lvl, verify input follows <#>|<hexcode> pattern")
 
+		# If there were no errors, pull color from settings
     if not error:
-        color = randchoice(list(svar_dict["color_lvl"].values()))
 
+				# Try to pull the color
+				try:
+	        color = randchoice(list(svar_dict["color_lvl"].values()))
+
+				# If unable to pull color (likely due to default value being removed)
+				except:
+					color = ""
+
+		# If there were errors, give error color
     else:
         color = "#CF142B"
 
-    return f"{ctx.prefix}embed -title Changing Looking For Group Settings -f" + "\n".join(change_list) + f" -thumb https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png -color {color} -footer {ctx.prefix}lfg settings <#/setting name> | 2/3/24 | ShadowsStride", f"{ctx.prefix}svar lfg_settings {dump_json(svar_dict)}"
+		# Create temp_dictionary to allow deleting while iterating
+		temp_dict = {setting_name: setting_value for setting_name, setting_value in svar_dict.items()}
+
+		# For each setting, setting_value
+		for setting_name, setting_value in temp_dict.items():
+
+			# If default value, remove value from svar_dict
+			if is_default_value(setting_name, setting_value, default_settings):
+				svar_dict.pop(setting_name)
+
+			# If not default value
+			else:
+				pass
+
+    return f"{ctx.prefix}embed -title 'Changing Looking For Group Settings' -f '" + "\n".join(change_list) + f"' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png' -color '{color}' -footer '{ctx.prefix}lfg settings <#/setting name> | 2/3/24 | ShadowsStride'", f"{ctx.prefix}svar lfg_settings {dump_json(svar_dict)}"
 
                         
 def main(input_list: list[str]) -> tuple(str, str):
+	"""
+	Main program function
 
+	Args:
+		input_list (list[str]): List of user inputs
+
+	Return:
+		str: Embed output string
+    str: SVAR edit string
+	"""
+
+		# Default settings
     default_settings = {
         "subclass": 1,
         "thp": 1,
@@ -235,17 +382,26 @@ def main(input_list: list[str]) -> tuple(str, str):
     else:
         svar_dict = default_settings
 
-    args = argparse(input_list)
+    args = argparse(" ".join(input_list))
 
     change_dict = {}
 
-    for setting in svar_dict.keys():
-        if (arg_output := args.last(setting, default=svar_dict[setting])) == svar_dict[setting]:
-            pass
+    for setting in list(svar_dict.keys()):
+
+        if f"-{setting}" in "\n".join(input_list) and setting != "color_lvl":
+
+            arg_output = ", ".join(args.get(setting))
+            if arg_output == str(svar_dict[setting]):
+                pass
+
+            else:
+                change_dict[setting] = arg_output
+
+        elif f"-{setting}" in "\n".join(input_list):
+            change_dict["color_lvl"] = ", ".join(args.get(setting))
 
         else:
-            change_dict[setting] = arg_output
-
+            pass
 
     if len(change_dict) == 0:
 
@@ -257,7 +413,7 @@ def main(input_list: list[str]) -> tuple(str, str):
                 return display_settings(int(input_list[0]), svar_dict, default_settings)
 
             except:
-                if (search_result := search_list(search_list(input_list[0], svar_dict.keys()))):
+                if (search_result := search_list(input_list[0], svar_dict.keys())):
                     if len(search_result) == 1:
                         return display_settings(1, svar_dict, default_settings, settings_name=search_result[0])
 
@@ -277,6 +433,7 @@ def main(input_list: list[str]) -> tuple(str, str):
     else:
         return edit_settings(change_dict, svar_dict, default_settings)
 
+# Main program function
 output_str, svar_str = main(&ARGS&)
 
 </drac2>
