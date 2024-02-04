@@ -375,60 +375,90 @@ def main(input_list: list[str]) -> tuple(str, str):
         "response_req": 0
         }
 
+    # If SVAR exists, grab and set default settings
     if (svar_test := get_svar("lfg_settings")):
         svar_dict = set_default_settings(load_json(svar_test), default_settings)
 
+    # If SVAR does not exist, set default settings
     else:
         svar_dict = default_settings
 
+    # Parse out items
     args = argparse(" ".join(input_list))
 
+    # Create change dictionary
     change_dict = {}
 
+    # For each setting
     for setting in list(svar_dict.keys()):
 
+        # If setting beting edited (and that setting is not color_lvl)
         if f"-{setting}" in "\n".join(input_list) and setting != "color_lvl":
 
-            arg_output = ", ".join(args.get(setting))
+            # Collect input
+            arg_output = args.last(setting)
+
+            # If setting is default setting
             if arg_output == str(svar_dict[setting]):
                 pass
 
+            # If setting is not default setting
             else:
                 change_dict[setting] = arg_output
 
+        # If color_lvl setting being edited
         elif f"-{setting}" in "\n".join(input_list):
             change_dict["color_lvl"] = ", ".join(args.get(setting))
 
+        # If setting not being edited
         else:
             pass
 
+    # If there were no changes
     if len(change_dict) == 0:
 
+        # If there were no inputs
         if len(input_list) == 0:
             return display_settings(1, svar_dict, default_settings)
 
+        # If there were at least one input
         else:
+
+            # Try to interpret first input as a number
             try:
                 return display_settings(int(input_list[0]), svar_dict, default_settings)
 
+            # If first input was not a number
             except:
-                if (search_result := search_list(input_list[0], svar_dict.keys())):
+
+                # Search for setting 
+                if (search_result := search_list(input_list[0].strip("-"), svar_dict.keys())):
+
+                    # If only one setting was found
                     if len(search_result) == 1:
                         return display_settings(1, svar_dict, default_settings, settings_name=search_result[0])
 
+                    # If multiple settings were found
                     else:
+
+                        # For each possible match
                         for match in search_result:
+
+                            # If match does not match up exactly
                             if match.lower() != input_list[0].lower():
                                 pass
 
+                            # If match does match up exactly
                             else:
                                 return display_settings(1, svar_dict, default_settings, settings_name=match)
 
                         return display_settings(1, svar_dict, default_settings, message=f"Multiple Settings Found ('{input_list[0]}')", color="#CF142B")
 
+                # If setting was not found
                 else:
                     return display_settings(1, svar_dict, default_settings, message=f"Setting Not Found ('{input_list[0]}')", color="#CF142B")
            
+    # If there were changes
     else:
         return edit_settings(change_dict, svar_dict, default_settings)
 
