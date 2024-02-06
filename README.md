@@ -19,6 +19,11 @@ See [Settings](https://github.com/Shadow-Draconic-Development/Avrae-Looking-For-
 
 [Table of Contents](https://github.com/Shadow-Draconic-Development/Avrae-Looking-For-Group-Helper/blob/main/ToC.md)
 [Shadow's Main Website](https://shadow-draconic-development.github.io/.github/)
+[Shadow's Discord Server](https://discord.gg/JqaH7Nbgmr)
+
+## Latest Update Information (2/4/24):
+- Migrated to a new GitHub account.
+- Added `settings` subalias to allow for easier editing of settings
 
 ## License Notice
 
