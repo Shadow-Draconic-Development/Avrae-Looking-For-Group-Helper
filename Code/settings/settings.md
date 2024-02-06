@@ -29,8 +29,8 @@ Two options:
 ```
 - Use the settings subalias to edit values
 
-    Simply type `alias settings` and then add `-<setting name> <setting value>` for each setting you want to change.
-    I.e. I want to change subclass and thp, I simply type `alias -subclass 1 -thp 1`
+    Simply type `lfg settings` and then add `-<setting name> <setting value>` for each setting you want to change.
+    I.e. I want to change subclass and thp, I simply type `lfg settings -subclass 1 -thp 1`
 
     If you are wanting to change the color_lvl setting, type `-color_lvl "<level#>|<Hex code>" -color_lvl "<level#|<Hex code>"`
     I.e. if I want level 1 being #00FFFF, level 10 being #FF0000, and level 20 being #F00F00 I type `-color_lvl "1|#00FFFF -color_lvl 10|#FF0000 -color_lvl 20|#F00F00"` and it will update the dictionary entry to `{"1":"#00FFFF", "10":"#FF0000", "20":"#F00F00"}`
