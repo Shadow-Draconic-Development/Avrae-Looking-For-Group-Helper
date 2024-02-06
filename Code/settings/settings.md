@@ -69,7 +69,7 @@ Two options:
 
 ### perc (Passive Perception)
 - Default: Off
-- Displays passive insight
+- Displays passive perception
 - In order for observant to apply properly, you have to have a cvar named `feats` and have 'observant' in the cvar. Recommended to have [Verbose Character Tools](https://avrae.io/dashboard/workshop/5f7385fe647bb0a416316d1d) and run `!manage feats add observant`.
 
 ### spell_list
