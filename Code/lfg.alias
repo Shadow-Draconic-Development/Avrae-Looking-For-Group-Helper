@@ -71,157 +71,214 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
     # Variable setup
     class_list = []
 
+    # If subclass is being used
     if subclass_bool == 1:
+
+        # If subclass CVAR exists, load dictionary
         if (cvar_subclass_test := ch.get_cvar('subclass')):
             cvar_subclass_dict = load_json(cvar_subclass_test)
 
+        # If CVAR dict does not exist
         else:
             cvar_subclass_dict = {}
             subclass_bool = 0
 
-    else:
-        pass
-
     # Grabs all the class(es) and level(s)
     class_details = {player_cls: level for player_cls, level in ch.levels}
 
+    # For player class in class level
     for player_cls, cls_level in class_details.items():
 
-        if "blood" not in player_cls.lower():
-            pass
-
-        else:
+        # If blood in player class
+        if "blood" in player_cls.lower():
             player_cls = "blood"
 
+        # If it finds a match (and subclass is true)
         if (result_key := search_list(player_cls, cvar_subclass_dict.keys())) and subclass_bool == 1:
 
             match result_key[0]:
 
+                # If barbarian
                 case c if "barbarian" in c.lower():
 
+                    # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1:
 
+                        # If not wild magic
                         if cvar_subclass_dict[result_key[0]] != "Wild Magic":
                             class_list.append(f"Path of the {cvar_subclass_dict[result_key[0]]} Barbarian ({cls_level})")
 
+                        # If wild magic
                         else:
                             class_list.append(f"Path of Wild Magic Barbarian ({cls_level})")
 
+                    # If at least level 3 and not full subclass
                     elif cls_level >= 3:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Barbarian ({cls_level})")
 
+                    # If not at least level 3
                     else:
                         class_list.append(f"Barbarian ({cls_level})")
 
-
+                # If bard
                 case c if "bard" in c.lower():
 
+                    # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1:
                         class_list.append(f"College of {cvar_subclass_dict[result_key[0]]} Bard ({cls_level})")
 
+                    # If at least level 3 and not full subclass
                     elif cls_level >= 3:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Bard ({cls_level})")
 
+                    # If not at least level 3
                     else:
                         class_list.append(f"Bard ({cls_level})")
 
+                # If blood hunter
                 case c if "blood" in c.lower():
 
+                    # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1:
                         class_list.append(f"Order of the {cvar_subclass_dict[result_key[0]]} Blood Hunter ({cls_level})")
 
+                    # If at least level 3 and not full subclass
                     elif cls_level >= 3:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Blood Hunter ({cls_level})")
 
+                    # If not at least level 3
                     else:
                         class_list.append(f"Blood Hunter ({cls_level})")
 
+                # If cleric
                 case c if "cleric" in c.lower():
+
+                    # If full subclass
                     if full_subclass_bool == 1:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Domain Cleric ({cls_level})")
 
+                    # If not full subclass
                     else:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Cleric ({cls_level})")
 
+                # If druid
                 case c if "druid" in c.lower():
+
+                    # If at least level 2 and full subclass
                     if cls_level >= 2 and full_subclass_bool == 1:
+
+                        # If dreams, spores, stars, or wildfire
                         if cvar_subclass_dict[result_key[0]] in ['Dreams', 'Spores', 'Stars', 'Wildfire']:
                             class_list.append(f"Circle of {cvar_subclass_dict[result_key[0]]} Druid ({cls_level})")
 
+                        # If not dreams, spores stars or wildfire
                         else:
                            class_list.append(f"Circle of the {cvar_subclass_dict[result_key[0]]} Druid ({cls_level})")
 
+                    # If at least level 2 and not full subclass
                     elif cls_level >= 2:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Druid ({cls_level})")
 
+                    # If not at least level 2
                     else:
-                        class_list.append(f"Druid (1)")
+                        class_list.append("Druid (1)")
 
+                # If monk
                 case c if "monk" in c.lower():
+
+                    # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1:
+
+                        # If mercy or shadow
                         if cvar_subclass_dict[result_key[0]] not in ['Mercy', 'Shadow']:
                             class_list.append(f"Way of the {cvar_subclass_dict[result_key[0]]} Monk ({cls_level})")
 
+                        # If not mercy or shadow
                         else:
                             class_list.append(f"Way of {cvar_subclass_dict[result_key[0]]} Monk ({cls_level})")
 
+                    # If at least level 3 and not full subclass
                     elif cls_level >= 3:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Monk ({cls_level})")
 
+                    # If not at least level 3
                     else:
                         class_list.append(f"Monk ({cls_level})")
 
+                # If paladin
                 case c if "paladin" in c.lower():
+
+                    # If at least level 3, full subclass, and not oathbreaker
                     if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]] != "Oathbreaker":
+
+                        # If conquest, devotion, glory, redemption, or vengeance
                         if cvar_subclass_dict[result_key[0]] in ['Conquest', 'Devotion', 'Glory', 'Redemption', 'Vengeance']:
                             class_list.append(f"Oath of {cvar_subclass_dict[result_key[0]]} Paladin ({cls_level})")
 
+                        # if not conquest, devotion, glory, redemption, or vengeance
                         else:
                             class_list.append(f"Oath of the {cvar_subclass_dict[result_key[0]]} Paladin ({cls_level})")
 
+                    # If at least level 3, not full subclass, or oathbreaker
                     elif cls_level >= 3:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Paladin ({cls_level})")
 
+                    # If not at least level 3
                     else:
                         class_list.append(f"Paladin ({cls_level})")
 
+                # If warlock
                 case c if "warlock" in c.lower():
                     class_list.append(f"{cvar_subclass_dict[result_key[0]]} Warlock ({cls_level})")
 
+                # If wizard
                 case c if "wizard" in c.lower():
+
+                    # If at least level 2, full subclass, and not bladesinger or war magic
                     if cls_level >= 2 and full_subclass_bool and cvar_subclass_dict[result_key[0]] not in ["Bladesinger", "War Magic"]:
 
                         match cvar_subclass_dict[result_key[0]]:
 
+                            # If scribes
                             case "Scribes":
                                 class_list.append(f"Order of {cvar_subclass_dict[result_key[0]]} Wizard ({cls_level})")
 
+                            # If graviturgist or chronurgy
                             case c if c in ['Graviturgist', 'Chronurgy']:
                                 class_list.append(f"{cvar_subclass_dict[result_key[0]]} Magic Wizard ({cls_level})")
 
+                            # If not scribes, graviturgist, or chronurgy
                             case _:
                                 class_list.append(f"School of {cvar_subclass_dict[result_key[0]]} Wizard ({cls_level})")
 
+                    # If at least level 2, not full subclass, bladesinger, or war magic
                     elif cls_level >= 2:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Wizard ({cls_level})")
 
+                    # If not at least level 2
                     else:
-                        class_list.append(f"Wizard ({cls_level})")
+                        class_list.append("Wizard (1)")
 
+                # If other class
                 case _:
 
+                    # If at least level 3
                     if cls_level >= 3:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} {result_key[0].split('Level')[0]} ({cls_level})")
 
+                    # if not at least level 3
                     else:
                         class_list.append(f"{result_key[0].split('Level')[0]} ({cls_level})")
 
+        # If no match
         else:
             class_list.append(f"{player_cls} ({cls_level})")
 
-    # Says whether or not it is a multiclass or not
+    # If multiclass
     if len(class_list) > 1:
-        return "\n".join(class_list + ["", f"**Total levels:** {ch.levels.total_level}"])       
+        return "\n".join(class_list + ["", f"**Total levels:** {ch.levels.total_level}"])
+
+    # If not multiclass       
     else:
         return "\n".join(class_list)
 
@@ -241,15 +298,21 @@ def get_passives(ch: character, ins_bool: int, inv_bool: int, perc_bool: int) ->
     """
     result_list = []
 
+    # If passive insight or passive perception
     if ins_bool == 1 or perc_bool == 1:
+
+        # If feats CVAR exists
         if (feat_cvar_test := ch.get_cvar('feats')):
 
+            # If observant in CVAR
             if 'obs' in feat_cvar_test.lower():
                 observant = True
 
+            # If observant not in CVAR
             else:
                 observant = False
 
+        # If feats CVAR does not exist
         else:
             observant = False
 
@@ -358,38 +421,41 @@ def main(input_list: list[str]) -> str:
         (list): List of outputs
     """
 
+    # Load character object
     ch = character()
 
-    # If 
+    # If LFG settings exists, load dictionary
     if (svar_test := get_svar("lfg_settings")):
         svar_dict = set_default_settings(load_json(svar_test), {'subclass': 1, 'thp': 1, 'img': 1, 'player': 0, 'ac': 0, 'ins': 0, 'inv': 0, 'perc': 0, 'spell_list': 0, 'spell_slot': 0, 'full_subclass': 0, "color_lvl": {"0": ""}, "response_req": 0})
 
+    # If LFG settings does not exist, use default settings
     else:
         svar_dict = {'subclass': 1, 'thp': 1, 'img': 1, 'player': 0, 'ac': 0, 'ins': 0, 'inv': 0, 'perc': 0, 'spell_list': 0, 'spell_slot': 0, 'full_subclass': 0, "color_lvl": {"0": ""}, "response_req": 0}
 
+    # Set title
     title = f"{name} is looking for a group!"
 
-    if (thumb := ch.image) != "" and svar_dict['img'] == 1:
-        pass
-    
-    else:
+    # If no character image or use character image not true
+    if (thumb := ch.image) == "" or svar_dict['img'] == 0:
         thumb = "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png"
 
-    if svar_dict['response_req'] == 0 or len(input_list) > 0:
-        pass
-
-    else:
+    # If response required and no inputs
+    if svar_dict['response_req'] == 1 and len(input_list) <= 0:
         return f"You Have Been Sneak Attacked by an Error", "You are required to give a quest suggestion/response", thumb, "#CC0202"
 
+    # Create output
     f = [
         "**Quest:** " + " ".join(input_list)
     ]
 
+    # Get classes
     f.append(get_classes(ch, svar_dict['subclass'], svar_dict['full_subclass']))
 
+    # If display THP
     if svar_dict['thp'] == 1:
         f.append(f"**HP:** {ch.hp_str()}")
 
+    # if not display THP
     else:
         f.append(f"**HP:** {ch.hp}")
 
@@ -397,87 +463,103 @@ def main(input_list: list[str]) -> str:
     if svar_dict['ac'] == 1:
         f.append(f"**AC:** {ch.ac}")
 
-    else:
-        pass
-
+    # If any passives
     if svar_dict['ins'] == 1 or svar_dict['inv'] == 1 or svar_dict['perc'] == 1:
         f.append(get_passives(ch, svar_dict['ins'], svar_dict['inv'], svar_dict['perc']))
 
-    else:
-        pass
-
+    # If show spell list and spell list has at least one spell
     if svar_dict['spell_list'] == 1 and len((spell_list := [spell.name for spell in ch.spellbook.spells if spell.prepared])) > 0:
         f.append("**Prepared Spell List:** " + ", ".join(spell_list))
 
-    else:
-        pass
-
+    # If show spell slots and has at least one spell slot
     if svar_dict['spell_slot'] == 1 and len((spell_book := [ch.spellbook.slots_str(i) for i in range(1, 10) if ch.spellbook.slots_str(i) != "No spell slots."])) > 0:
         spell_book.insert(0, "**Spell Slots:**")
 
         f.append("\n".join(spell_book))
 
-    else:
-        pass
-
+    # If mention player (does not do an actual ping)
     if svar_dict['player'] == 1:
         f.append(f"<@{ch.owner}>")
 
-    else:
-        pass
+    current_time = time()
 
+    # If crafting alias is used, load dictionary
     if (crafting_svar_test := get_svar('crafting_settings')):
-
         crafting_svar_dict = load_json(crafting_svar_test)
 
-        if 'lfg_integration' in crafting_svar_dict.keys():
-            if not crafting_svar_dict['lfg_integration']:
-                pass
+        # If lfg integration in settings
+        if "lfg_integration" in crafting_svar_dict.keys():
 
-            else:
+            # If LFG integrations
+            if crafting_svar_dict["lfg_integration"]:
+
+                # If CVAR exists, load dictionary
                 if (crafting_cvar_test := ch.get_cvar('crafting_dict')):
                     crafting_cvar_dict = load_json(crafting_cvar_test)
 
+                    # Try to calculate time
                     try:
-                        if time() >= crafting_cvar_dict['time'] + crafting_svar_dict[crafting_cvar_dict['category']][crafting_dictionary['type']][6]:
-                            pass
 
-                        else:
+                        # If cooldown active
+                        if current_time < crafting_cvar_dict['time'] + crafting_svar_dict[crafting_cvar_dict['category']][crafting_dictionary['type']][6]:
                             f.append("`This character's crafting cooldown has not expired`")
 
+                    # If there was a problem
                     except:
                         f.append("`Problems have occured with the crafting integration, please contact Shadow through his request form in the workshop`")
 
-                else:
-                    pass
+    # If taming alias is used and CVAR exists, load dictionaries
+    if (taming_svar_test := get_svar("tame_settings")) and (taming_cvar_test := ch.get_cvar("tame_dict")):
+        taming_svar_dict = load_json(taming_svar_test)
+        taming_cvar_dict = load_json(taming_cvar_test)
 
-        else:
-            pass
+        # If settings exists
+        if "settings" in taming_svar_dict.keys():
 
-    else:
-        pass
-        
+            # If lfg_integration in settings and next tame in CVAR
+            if "lfg_integration" in taming_svar_dict["settings"].keys() and "next_tame" in taming_cvar_dict.keys():
+
+                # If lfg integration and past time
+                if taming_svar_dict["settings"]["lfg_integration"] and current_time < taming_cvar_dict["next_tame"]:
+                    f.append("`This character's taming cooldown has not expired`")
+
+    # If color level is a dicionary        
     if typeof(svar_dict['color_lvl']) == "SafeDict":
         color = ""
 
-        for color_threshold in svar_dict['color_lvl'].keys():
-            try:
+        try:
+            # Create new list and sort them
+            color_threshold_list = [int(thresh) for thresh in svar_dict['color_lvl'].keys()]
+            color_threshold_list.sort()
+
+            # For each color threshold
+            for color_threshold in color_threshold_list:
+
+                # If pass threshold
                 if ch.levels.total_level >= int(color_threshold):
                     color =  svar_dict['color_lvl'][color_threshold]
 
+                # If not pass threshold
                 else:
-                    pass
-            except:
-                pass
+                    break
 
+        # If it tried to convert a str to an int
+        except:
+            pass
+
+    # If color level is a string
     elif typeof(svar_dict['color_lvl']) == "str":
         color = svar_dict['color_lvl']
 
+    # If color level is a list
     else:
-        try:
+        
+        # If length of list is greater than 0
+        if len(svar_dict['color_lvl']) > 0:
             color = randchoice(svar_dict['color_lvl'])
 
-        except:
+        # If length of list is 0
+        else:
             color = ""
         
     return title, "\n\n".join(f), thumb, color
@@ -493,4 +575,4 @@ l = "<"
 -f "{{f}}"
 -thumb "{{thumb}}"
 -color "{{color}}"
--footer "{{ctx.prefix}}lfg {{l}}phrase> | 2/3/24 | ShadowsStride"
+-footer "{{ctx.prefix}}lfg {{l}}phrase> | 3/9/24 | ShadowsStride"
