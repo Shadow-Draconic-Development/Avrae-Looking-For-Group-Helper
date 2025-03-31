@@ -102,10 +102,10 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                 case c if "barbarian" in c.lower():
 
                     # If at least level 3 and full subclass
-                    if cls_level >= 3 and full_subclass_bool == 1:
+                    if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]].lower() != "shadow gnawer":
 
-                        # If not wild magic
-                        if cvar_subclass_dict[result_key[0]] != "Wild Magic":
+                        # If not wild magic or shadow gnawer
+                        if cvar_subclass_dict[result_key[0]].lower() != "wild magic":
                             class_list.append(f"Path of the {cvar_subclass_dict[result_key[0]]} Barbarian ({cls_level})")
 
                         # If wild magic
@@ -168,10 +168,10 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                     if cls_level >= 2 and full_subclass_bool == 1:
 
                         # If dreams, spores, stars, or wildfire
-                        if cvar_subclass_dict[result_key[0]] in ['Dreams', 'Spores', 'Stars', 'Wildfire']:
+                        if cvar_subclass_dict[result_key[0]].lower() in ['dreams', 'spores', 'stars', 'wildfire', "dragons", "shadows"]:
                             class_list.append(f"Circle of {cvar_subclass_dict[result_key[0]]} Druid ({cls_level})")
 
-                        # If not dreams, spores stars or wildfire
+                        # If not dreams, spores, stars, wildfire, dragons, or shadows
                         else:
                            class_list.append(f"Circle of the {cvar_subclass_dict[result_key[0]]} Druid ({cls_level})")
 
@@ -187,13 +187,13 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                 case c if "monk" in c.lower():
 
                     # If at least level 3 and full subclass
-                    if cls_level >= 3 and full_subclass_bool == 1:
-
-                        # If mercy or shadow
-                        if cvar_subclass_dict[result_key[0]] not in ['Mercy', 'Shadow']:
-                            class_list.append(f"Way of the {cvar_subclass_dict[result_key[0]]} Monk ({cls_level})")
+                    if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]].lower() != "sheep dragon shepherd":
 
                         # If not mercy or shadow
+                        if cvar_subclass_dict[result_key[0]].lower() not in ['mercy', 'shadow']:
+                            class_list.append(f"Way of the {cvar_subclass_dict[result_key[0]]} Monk ({cls_level})")
+
+                        # If mercy or shadow
                         else:
                             class_list.append(f"Way of {cvar_subclass_dict[result_key[0]]} Monk ({cls_level})")
 
@@ -209,10 +209,10 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                 case c if "paladin" in c.lower():
 
                     # If at least level 3, full subclass, and not oathbreaker
-                    if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]] != "Oathbreaker":
+                    if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]].lower() != "oathbreaker":
 
-                        # If conquest, devotion, glory, redemption, or vengeance
-                        if cvar_subclass_dict[result_key[0]] in ['Conquest', 'Devotion', 'Glory', 'Redemption', 'Vengeance']:
+                        # If conquest, devotion, glory, redemption, vengeance, zeal, or the watchers
+                        if cvar_subclass_dict[result_key[0]].lower() in ['conquest', 'devotion', 'glory', 'redemption', 'vengeance', "zeal", "the watchers"]:
                             class_list.append(f"Oath of {cvar_subclass_dict[result_key[0]]} Paladin ({cls_level})")
 
                         # if not conquest, devotion, glory, redemption, or vengeance
@@ -235,7 +235,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                 case c if "wizard" in c.lower():
 
                     # If at least level 2, full subclass, and not bladesinger or war magic
-                    if cls_level >= 2 and full_subclass_bool and cvar_subclass_dict[result_key[0]] not in ["Bladesinger", "War Magic"]:
+                    if cls_level >= 2 and full_subclass_bool and cvar_subclass_dict[result_key[0]].lower() not in ["bladesinging", "war magic", "bladesinger", "blood magic", "force missile"]:
 
                         match cvar_subclass_dict[result_key[0]]:
 
@@ -244,7 +244,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                                 class_list.append(f"Order of {cvar_subclass_dict[result_key[0]]} Wizard ({cls_level})")
 
                             # If graviturgist or chronurgy
-                            case c if c in ['Graviturgist', 'Chronurgy']:
+                            case c if c in ['Graviturgy', 'Chronurgy', "Layline", "Origami"]:
                                 class_list.append(f"{cvar_subclass_dict[result_key[0]]} Magic Wizard ({cls_level})")
 
                             # If not scribes, graviturgist, or chronurgy
@@ -575,4 +575,4 @@ l = "<"
 -f "{{f}}"
 -thumb "{{thumb}}"
 -color "{{color}}"
--footer "{{ctx.prefix}}lfg {{l}}phrase> | 3/9/24 | ShadowsStride"
+-footer "{{ctx.prefix}}lfg {{l}}phrase> | 3/31/25 | ShadowsStride"
