@@ -272,6 +272,9 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
 
         # If no match
         else:
+            if player_cls == "blood":
+                player_cls = "Blood Hunter"
+
             class_list.append(f"{player_cls} ({cls_level})")
 
     # If multiclass
@@ -575,4 +578,4 @@ l = "<"
 -f "{{f}}"
 -thumb "{{thumb}}"
 -color "{{color}}"
--footer "{{ctx.prefix}}lfg {{l}}phrase> | 3/31/25 | ShadowsStride"
+-footer "{{ctx.prefix}}lfg {{l}}phrase> | 8/9/25 | ShadowsStride"
