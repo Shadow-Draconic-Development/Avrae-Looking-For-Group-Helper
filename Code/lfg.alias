@@ -98,6 +98,9 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
 
             match result_key[0]:
 
+                case c if "sorcerer" in c.lower():
+                    class_list.append(f"{cvar_subclass_dict[result_key[0]]} Sorcerer ({cls_level})")
+
                 # If barbarian
                 case c if "barbarian" in c.lower():
 
@@ -578,4 +581,4 @@ l = "<"
 -f "{{f}}"
 -thumb "{{thumb}}"
 -color "{{color}}"
--footer "{{ctx.prefix}}lfg {{l}}phrase> | 8/9/25 | ShadowsStride"
+-footer "{{ctx.prefix}}lfg {{l}}phrase> | 10/19/25 | ShadowsStride"
