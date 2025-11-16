@@ -98,6 +98,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
 
             match result_key[0]:
 
+                # If sorcerer
                 case c if "sorcerer" in c.lower():
                     class_list.append(f"{cvar_subclass_dict[result_key[0]]} Sorcerer ({cls_level})")
 
@@ -432,11 +433,11 @@ def main(input_list: list[str]) -> str:
 
     # If LFG settings exists, load dictionary
     if (svar_test := get_svar("lfg_settings")):
-        svar_dict = set_default_settings(load_json(svar_test), {'subclass': 1, 'thp': 1, 'img': 1, 'player': 0, 'ac': 0, 'ins': 0, 'inv': 0, 'perc': 0, 'spell_list': 0, 'spell_slot': 0, 'full_subclass': 0, "color_lvl": {"0": ""}, "response_req": 0})
+        svar_dict = set_default_settings(load_json(svar_test), {'subclass': 1, 'thp': 1, 'img': 1, 'player': 0, 'ac': 0, 'ins': 0, 'inv': 0, 'perc': 0, 'spell_list': 0, 'spell_slot': 0, 'full_subclass': 0, "color_lvl": {"0": color}, "response_req": 0})
 
     # If LFG settings does not exist, use default settings
     else:
-        svar_dict = {'subclass': 1, 'thp': 1, 'img': 1, 'player': 0, 'ac': 0, 'ins': 0, 'inv': 0, 'perc': 0, 'spell_list': 0, 'spell_slot': 0, 'full_subclass': 0, "color_lvl": {"0": ""}, "response_req": 0}
+        svar_dict = {'subclass': 1, 'thp': 1, 'img': 1, 'player': 0, 'ac': 0, 'ins': 0, 'inv': 0, 'perc': 0, 'spell_list': 0, 'spell_slot': 0, 'full_subclass': 0, "color_lvl": {"0": color}, "response_req": 0}
 
     # Set title
     title = f"{name} is looking for a group!"
@@ -531,27 +532,22 @@ def main(input_list: list[str]) -> str:
 
     # If color level is a dicionary        
     if typeof(svar_dict['color_lvl']) == "SafeDict":
-        color = ""
+        color = color
 
-        try:
-            # Create new list and sort them
-            color_threshold_list = [int(thresh) for thresh in svar_dict['color_lvl'].keys()]
-            color_threshold_list.sort()
+        # For each color in the level threshold
+        for color_threshold in svar_dict["color_lvl"].keys():
+            try:
 
-            # For each color threshold
-            for color_threshold in color_threshold_list:
-
-                # If pass threshold
+                # If character level >= threshold
                 if ch.levels.total_level >= int(color_threshold):
-                    color =  svar_dict['color_lvl'][color_threshold]
+                    color = svar_dict["color_lvl"][color_threshold]
 
-                # If not pass threshold
+                # If character level < threshold
                 else:
                     break
 
-        # If it tried to convert a str to an int
-        except:
-            pass
+            except:
+                pass
 
     # If color level is a string
     elif typeof(svar_dict['color_lvl']) == "str":
@@ -566,7 +562,9 @@ def main(input_list: list[str]) -> str:
 
         # If length of list is 0
         else:
-            color = ""
+            color = color
+
+    color = color.split("#")[-1]
         
     return title, "\n\n".join(f), thumb, color
 
@@ -581,4 +579,4 @@ l = "<"
 -f "{{f}}"
 -thumb "{{thumb}}"
 -color "{{color}}"
--footer "{{ctx.prefix}}lfg {{l}}phrase> | 10/19/25 | ShadowsStride"
+-footer "{{ctx.prefix}}lfg {{l}}phrase> | 11/15/25 | ShadowsStride"
