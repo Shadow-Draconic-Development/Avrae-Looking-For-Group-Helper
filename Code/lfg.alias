@@ -24,13 +24,12 @@ def search_list(query: str, item_list: list[str]) -> list[str]|None:
         list[str]|None: If it finds at least one match, it returns the item(s) in a list, otherwise it returns None
     """
 
-    # Finds at least 1 match
-    if len(item_results := [item for item in item_list if query.lower() in item.lower()]) > 0:
-        return item_results
+    # Casefold query (so that number of total case folds is n+1)
+    query = query.casefold()
 
-    # If it finds no matches
-    else:
-        return None
+    # Finds at least 1 match
+    item_results = [item for item in item_list if query in item.casefold()]
+    return item_results or None
 
 
 def set_default_settings(dictionary: dict, default_dictionary: dict) -> dict:
@@ -45,14 +44,9 @@ def set_default_settings(dictionary: dict, default_dictionary: dict) -> dict:
         dict: Corrected dictionary
     """
 
-    # For each key in the default dictionary
-    for default_key in default_dictionary.keys():
-
-        if default_key in dictionary.keys():
-            pass
-
-        else:
-            dictionary[default_key] = default_dictionary[default_key]
+    # For each key, value pair, set default settings
+    for key, value in default_dictionary.items():
+        dictionary.setdefault(key, value)
 
     return dictionary
 
@@ -75,7 +69,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
     if subclass_bool == 1:
 
         # If subclass CVAR exists, load dictionary
-        if (cvar_subclass_test := ch.get_cvar('subclass')):
+        if (cvar_subclass_test := ch.get_cvar("subclass")):
             cvar_subclass_dict = load_json(cvar_subclass_test)
 
         # If CVAR dict does not exist
@@ -93,17 +87,20 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
         if "blood" in player_cls.lower():
             player_cls = "blood"
 
+        if "monster" in player_cls.lower():
+            player_cls = "monster"
+
         # If it finds a match (and subclass is true)
         if (result_key := search_list(player_cls, cvar_subclass_dict.keys())) and subclass_bool == 1:
 
-            match result_key[0]:
+            match result_key[0].removesuffix("Level"):
 
                 # If sorcerer
-                case c if "sorcerer" in c.lower():
+                case "Sorcerer":
                     class_list.append(f"{cvar_subclass_dict[result_key[0]]} Sorcerer ({cls_level})")
 
                 # If barbarian
-                case c if "barbarian" in c.lower():
+                case "Barbarian":
 
                     # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]].lower() != "shadow gnawer":
@@ -125,7 +122,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"Barbarian ({cls_level})")
 
                 # If bard
-                case c if "bard" in c.lower():
+                case "Bard":
 
                     # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1:
@@ -140,7 +137,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"Bard ({cls_level})")
 
                 # If blood hunter
-                case c if "blood" in c.lower():
+                case "BloodHunter":
 
                     # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1:
@@ -154,8 +151,23 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                     else:
                         class_list.append(f"Blood Hunter ({cls_level})")
 
+                # If monster hunter
+                case "MonsterHunter":
+
+                    # If at least level 3 and full subclass
+                    if cls_level >= 3 and full_subclass_bool == 1:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Guild Monster Hunter ({cls_level})")
+
+                    # If at least level 3 and not full subclass
+                    elif cls_level >= 3:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Monster Hunter ({cls_level})")
+
+                    # If not at least level 3
+                    else:
+                        class_list.append(f"Monster Hunter ({cls_level})")
+
                 # If cleric
-                case c if "cleric" in c.lower():
+                case "Cleric":
 
                     # If full subclass
                     if full_subclass_bool == 1:
@@ -166,13 +178,13 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Cleric ({cls_level})")
 
                 # If druid
-                case c if "druid" in c.lower():
+                case "Druid":
 
                     # If at least level 2 and full subclass
                     if cls_level >= 2 and full_subclass_bool == 1:
 
                         # If dreams, spores, stars, or wildfire
-                        if cvar_subclass_dict[result_key[0]].lower() in ['dreams', 'spores', 'stars', 'wildfire', "dragons", "shadows"]:
+                        if cvar_subclass_dict[result_key[0]].lower() in ["dreams", "spores", "stars", "wildfire", "dragons", "shadows"]:
                             class_list.append(f"Circle of {cvar_subclass_dict[result_key[0]]} Druid ({cls_level})")
 
                         # If not dreams, spores, stars, wildfire, dragons, or shadows
@@ -188,7 +200,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append("Druid (1)")
 
                 # If monk
-                case c if "monk" in c.lower():
+                case "Monk":
 
                     # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]].lower() != "sheep dragon shepherd":
@@ -210,13 +222,13 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"Monk ({cls_level})")
 
                 # If paladin
-                case c if "paladin" in c.lower():
+                case "Paladin":
 
                     # If at least level 3, full subclass, and not oathbreaker
                     if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]].lower() != "oathbreaker":
 
                         # If conquest, devotion, glory, redemption, vengeance, zeal, or the watchers
-                        if cvar_subclass_dict[result_key[0]].lower() in ['conquest', 'devotion', 'glory', 'redemption', 'vengeance', "zeal", "the watchers"]:
+                        if cvar_subclass_dict[result_key[0]].lower() in ["conquest", "devotion", "glory", "redemption", "vengeance", "zeal", "the watchers"]:
                             class_list.append(f"Oath of {cvar_subclass_dict[result_key[0]]} Paladin ({cls_level})")
 
                         # if not conquest, devotion, glory, redemption, or vengeance
@@ -232,11 +244,11 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"Paladin ({cls_level})")
 
                 # If warlock
-                case c if "warlock" in c.lower():
+                case "Warlock":
                     class_list.append(f"{cvar_subclass_dict[result_key[0]]} Warlock ({cls_level})")
 
                 # If wizard
-                case c if "wizard" in c.lower():
+                case "Wizard":
 
                     # If at least level 2, full subclass, and not bladesinger or war magic
                     if cls_level >= 2 and full_subclass_bool and cvar_subclass_dict[result_key[0]].lower() not in ["bladesinging", "war magic", "bladesinger", "blood magic", "force missile"]:
@@ -248,7 +260,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                                 class_list.append(f"Order of {cvar_subclass_dict[result_key[0]]} Wizard ({cls_level})")
 
                             # If graviturgist or chronurgy
-                            case c if c in ['Graviturgy', 'Chronurgy', "Layline", "Origami"]:
+                            case c if c in ["Graviturgy", "Chronurgy", "Layline", "Origami"]:
                                 class_list.append(f"{cvar_subclass_dict[result_key[0]]} Magic Wizard ({cls_level})")
 
                             # If not scribes, graviturgist, or chronurgy
@@ -268,7 +280,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
 
                     # If at least level 3
                     if cls_level >= 3:
-                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} {result_key[0].split('Level')[0]} ({cls_level})")
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} {result_key[0].removesuffix('Level')} ({cls_level})")
 
                     # if not at least level 3
                     else:
@@ -278,6 +290,9 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
         else:
             if player_cls == "blood":
                 player_cls = "Blood Hunter"
+
+            if player_cls == "monster":
+                player_cls = "Monster Hunter"
 
             class_list.append(f"{player_cls} ({cls_level})")
 
@@ -309,10 +324,10 @@ def get_passives(ch: character, ins_bool: int, inv_bool: int, perc_bool: int) ->
     if ins_bool == 1 or perc_bool == 1:
 
         # If feats CVAR exists
-        if (feat_cvar_test := ch.get_cvar('feats')):
+        if (feat_cvar_test := ch.get_cvar("feats")):
 
             # If observant in CVAR
-            if 'obs' in feat_cvar_test.lower():
+            if "obs" in feat_cvar_test.lower():
                 observant = True
 
             # If observant not in CVAR
@@ -326,30 +341,30 @@ def get_passives(ch: character, ins_bool: int, inv_bool: int, perc_bool: int) ->
         # If Passive Perception
         if perc_bool == 1:
 
-            match (observant, typeof(ch.skills.perception.adv)):
+            match [observant, typeof(ch.skills.perception.adv)]:
 
                 # Straight value
-                case (False, "NoneType"):
+                case [False, "NoneType"]:
                     result_list.append(f"**Passive Perception:** {10 + ch.skills['perception'].value}")
 
                 # Observant
-                case (True, "NoneType"):
+                case [True, "NoneType"]:
                     result_list.append(f"**Passive Perception:** {10 + 5 + ch.skills['perception'].value} [observant]")
 
                 # Advantage
-                case (False, _):
+                case [False, _]:
                     result_list.append(f"**Passive Perception:** {10 + ch.skills['perception'].value + 5} [advantage]")
 
                 # Observant and advantage
-                case (True, _):
+                case [True, _]:
                     result_list.append(f"**Passive Perception:** {10 + 5 + ch.skills['perception'].value + 5} [observant and advantage]")
 
                 # Disadvantage
-                case (False, False):
+                case [False, False]:
                     result_list.append(f"**Passive Perception:** {10 + ch.skills['perception'].value - 5} [disadvantage]")
 
                 # Observant and Disadvantage
-                case (True, False):
+                case [True, False]:
                     result_list.append(f"**Passive Perception:** {10 + ch.skills['perception'].value} [observant and disadvantage]")
         
         # If not Passive Perception
@@ -359,30 +374,30 @@ def get_passives(ch: character, ins_bool: int, inv_bool: int, perc_bool: int) ->
         # If Passive Insight
         if ins_bool == 1:
 
-            match (observant, typeof(ch.skills.insight.adv)):
+            match [observant, typeof(ch.skills.insight.adv)]:
 
                 # Straight value
-                case (False, "NoneType"):
+                case [False, "NoneType"]:
                     result_list.append(f"**Passive Insight:** {10 + ch.skills['insight'].value}")
 
                 # Observant
-                case (True, "NoneType"):
+                case [True, "NoneType"]:
                     result_list.append(f"**Passive Insight:** {10 + 5 + ch.skills['insight'].value} [observant]")
 
                 # Advantage
-                case (False, _):
+                case [False, _]:
                     result_list.append(f"**Passive Insight:** {10 + ch.skills['insight'].value + 5} [advantage]")
 
                 # Observant and advantage
-                case (True, _):
+                case [True, _]:
                     result_list.append(f"**Passive Insight:** {10 + 5 + ch.skills['insight'].value + 5} [observant and advantage]")
 
                 # Disadvantage
-                case (False, False):
+                case [False, False]:
                     result_list.append(f"**Passive Insight:** {10 + ch.skills['insight'].value - 5} [disadvantage]")
 
                 # Observant and Disadvantage
-                case (True, False):
+                case [True, False]:
                     result_list.append(f"**Passive Insight:** {10 + ch.skills['insight'].value} [observant and disadvantage]")
         
         # If not Passive Perception
@@ -433,21 +448,21 @@ def main(input_list: list[str]) -> str:
 
     # If LFG settings exists, load dictionary
     if (svar_test := get_svar("lfg_settings")):
-        svar_dict = set_default_settings(load_json(svar_test), {'subclass': 1, 'thp': 1, 'img': 1, 'player': 0, 'ac': 0, 'ins': 0, 'inv': 0, 'perc': 0, 'spell_list': 0, 'spell_slot': 0, 'full_subclass': 0, "color_lvl": {"0": color}, "response_req": 0})
+        svar_dict = set_default_settings(load_json(svar_test), {"subclass": 1, "thp": 1, "img": 1, "player": 0, "ac": 0, "ins": 0, "inv": 0, "perc": 0, "spell_list": 0, "spell_slot": 0, "full_subclass": 0, "color_lvl": {"0": color}, "response_req": 0})
 
     # If LFG settings does not exist, use default settings
     else:
-        svar_dict = {'subclass': 1, 'thp': 1, 'img': 1, 'player': 0, 'ac': 0, 'ins': 0, 'inv': 0, 'perc': 0, 'spell_list': 0, 'spell_slot': 0, 'full_subclass': 0, "color_lvl": {"0": color}, "response_req": 0}
+        svar_dict = {"subclass": 1, "thp": 1, "img": 1, "player": 0, "ac": 0, "ins": 0, "inv": 0, "perc": 0, "spell_list": 0, "spell_slot": 0, "full_subclass": 0, "color_lvl": {"0": color}, "response_req": 0}
 
     # Set title
     title = f"{name} is looking for a group!"
 
     # If no character image or use character image not true
-    if (thumb := ch.image) == "" or svar_dict['img'] == 0:
+    if (thumb := ch.image) == "" or svar_dict["img"] == 0:
         thumb = "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Looking-For-Group/main/Data/image.png"
 
     # If response required and no inputs
-    if svar_dict['response_req'] == 1 and len(input_list) <= 0:
+    if svar_dict["response_req"] == 1 and len(input_list) <= 0:
         return f"You Have Been Sneak Attacked by an Error", "You are required to give a quest suggestion/response", thumb, "#CC0202"
 
     # Create output
@@ -456,10 +471,10 @@ def main(input_list: list[str]) -> str:
     ]
 
     # Get classes
-    f.append(get_classes(ch, svar_dict['subclass'], svar_dict['full_subclass']))
+    f.append(get_classes(ch, svar_dict["subclass"], svar_dict["full_subclass"]))
 
     # If display THP
-    if svar_dict['thp'] == 1:
+    if svar_dict["thp"] == 1:
         f.append(f"**HP:** {ch.hp_str()}")
 
     # if not display THP
@@ -467,31 +482,31 @@ def main(input_list: list[str]) -> str:
         f.append(f"**HP:** {ch.hp}")
 
     # Show AC
-    if svar_dict['ac'] == 1:
+    if svar_dict["ac"] == 1:
         f.append(f"**AC:** {ch.ac}")
 
     # If any passives
-    if svar_dict['ins'] == 1 or svar_dict['inv'] == 1 or svar_dict['perc'] == 1:
-        f.append(get_passives(ch, svar_dict['ins'], svar_dict['inv'], svar_dict['perc']))
+    if svar_dict["ins"] == 1 or svar_dict["inv"] == 1 or svar_dict["perc"] == 1:
+        f.append(get_passives(ch, svar_dict["ins"], svar_dict["inv"], svar_dict["perc"]))
 
     # If show spell list and spell list has at least one spell
-    if svar_dict['spell_list'] == 1 and len((spell_list := [spell.name for spell in ch.spellbook.spells if spell.prepared])) > 0:
+    if svar_dict["spell_list"] == 1 and len((spell_list := [spell.name for spell in ch.spellbook.spells if spell.prepared])) > 0:
         f.append("**Prepared Spell List:** " + ", ".join(spell_list))
 
     # If show spell slots and has at least one spell slot
-    if svar_dict['spell_slot'] == 1 and len((spell_book := [ch.spellbook.slots_str(i) for i in range(1, 10) if ch.spellbook.slots_str(i) != "No spell slots."])) > 0:
+    if svar_dict["spell_slot"] == 1 and len((spell_book := [ch.spellbook.slots_str(i) for i in range(1, 10) if ch.spellbook.slots_str(i) != "No spell slots."])) > 0:
         spell_book.insert(0, "**Spell Slots:**")
 
         f.append("\n".join(spell_book))
 
     # If mention player (does not do an actual ping)
-    if svar_dict['player'] == 1:
+    if svar_dict["player"] == 1:
         f.append(f"<@{ch.owner}>")
 
     current_time = time()
 
     # If crafting alias is used, load dictionary
-    if (crafting_svar_test := get_svar('crafting_settings')):
+    if (crafting_svar_test := get_svar("crafting_settings")):
         crafting_svar_dict = load_json(crafting_svar_test)
 
         # If lfg integration in settings
@@ -501,14 +516,14 @@ def main(input_list: list[str]) -> str:
             if crafting_svar_dict["lfg_integration"]:
 
                 # If CVAR exists, load dictionary
-                if (crafting_cvar_test := ch.get_cvar('crafting_dict')):
+                if (crafting_cvar_test := ch.get_cvar("crafting_dict")):
                     crafting_cvar_dict = load_json(crafting_cvar_test)
 
                     # Try to calculate time
                     try:
 
                         # If cooldown active
-                        if current_time < crafting_cvar_dict['time'] + crafting_svar_dict[crafting_cvar_dict['category']][crafting_dictionary['type']][6]:
+                        if current_time < crafting_cvar_dict["time"] + crafting_svar_dict[crafting_cvar_dict["category"]][crafting_dictionary["type"]][6]:
                             f.append("`This character's crafting cooldown has not expired`")
 
                     # If there was a problem
@@ -530,40 +545,43 @@ def main(input_list: list[str]) -> str:
                 if taming_svar_dict["settings"]["lfg_integration"] and current_time < taming_cvar_dict["next_tame"]:
                     f.append("`This character's taming cooldown has not expired`")
 
-    # If color level is a dicionary        
-    if typeof(svar_dict['color_lvl']) == "SafeDict":
-        color = color
+    match typeof(svar_dict["color_lvl"]):
 
-        # For each color in the level threshold
-        for color_threshold in svar_dict["color_lvl"].keys():
-            try:
-
-                # If character level >= threshold
-                if ch.levels.total_level >= int(color_threshold):
-                    color = svar_dict["color_lvl"][color_threshold]
-
-                # If character level < threshold
-                else:
-                    break
-
-            except:
-                pass
-
-    # If color level is a string
-    elif typeof(svar_dict['color_lvl']) == "str":
-        color = svar_dict['color_lvl']
-
-    # If color level is a list
-    else:
-        
-        # If length of list is greater than 0
-        if len(svar_dict['color_lvl']) > 0:
-            color = randchoice(svar_dict['color_lvl'])
-
-        # If length of list is 0
-        else:
+        # If color level is a dicionary  
+        case "SafeDict":
             color = color
 
+            # For each color in the level threshold
+            for color_threshold in svar_dict["color_lvl"].keys():
+                try:
+
+                    # If character level >= threshold
+                    if ch.levels.total_level >= int(color_threshold):
+                        color = svar_dict["color_lvl"][color_threshold]
+
+                    # If character level < threshold
+                    else:
+                        break
+
+                except:
+                    pass
+
+        # If color level is a string
+        case "str":
+            color = svar_dict["color_lvl"]
+
+        # If color level is a list
+        case _:
+        
+            # If length of list is greater than 0
+            if len(svar_dict["color_lvl"]) > 0:
+                color = randchoice(svar_dict["color_lvl"])
+
+            # If length of list is 0
+            else:
+                color = color
+
+    # Remove # if present
     color = color.split("#")[-1]
         
     return title, "\n\n".join(f), thumb, color
@@ -579,4 +597,4 @@ l = "<"
 -f "{{f}}"
 -thumb "{{thumb}}"
 -color "{{color}}"
--footer "{{ctx.prefix}}lfg {{l}}phrase> | 11/15/25 | ShadowsStride"
+-footer "{{ctx.prefix}}lfg {{l}}phrase> | 3/24/26 | ShadowsStride"
