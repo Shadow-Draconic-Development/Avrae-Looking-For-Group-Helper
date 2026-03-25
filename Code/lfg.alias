@@ -528,7 +528,7 @@ def main(input_list: list[str]) -> str:
 
                     # If there was a problem
                     except:
-                        f.append("`Problems have occured with the crafting integration, please contact Shadow through his request form in the workshop`")
+                        f.append("`Problems have occurred with the crafting integration, please contact Shadow through his request form in the workshop`")
 
     # If taming alias is used and CVAR exists, load dictionaries
     if (taming_svar_test := get_svar("tame_settings")) and (taming_cvar_test := ch.get_cvar("tame_dict")):
@@ -547,7 +547,7 @@ def main(input_list: list[str]) -> str:
 
     match typeof(svar_dict["color_lvl"]):
 
-        # If color level is a dicionary  
+        # If color level is a dictionary 
         case "SafeDict":
             color = color
 
@@ -582,7 +582,7 @@ def main(input_list: list[str]) -> str:
                 color = color
 
     # Remove # if present
-    color = color.split("#")[-1]
+    color = color.removeprefix("#")
         
     return title, "\n\n".join(f), thumb, color
 
