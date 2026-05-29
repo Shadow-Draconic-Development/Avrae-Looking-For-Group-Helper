@@ -85,22 +85,26 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
 
         # If blood in player class
         if "blood" in player_cls.lower():
-            player_cls = "blood"
+            player_cls = "bloodhunter"
 
-        if "monster" in player_cls.lower():
-            player_cls = "monster"
+        elif "monster" in player_cls.lower():
+            player_cls = "monsterhunter"
 
         # If it finds a match (and subclass is true)
         if (result_key := search_list(player_cls, cvar_subclass_dict.keys())) and subclass_bool == 1:
 
-            match result_key[0].removesuffix("Level"):
+            # Basically, if we recieve None or False for ClassLevel, then we send it to the wildcard case in the match-case below
+            if not cvar_subclass_dict[result_key[0]]:
+                result_key[0] = result_key[0].removesuffix("Level")
+
+            match result_key[0]:
 
                 # If sorcerer
-                case "Sorcerer":
+                case "SorcererLevel":
                     class_list.append(f"{cvar_subclass_dict[result_key[0]]} Sorcerer ({cls_level})")
 
                 # If barbarian
-                case "Barbarian":
+                case "BarbarianLevel":
 
                     # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]].lower() != "shadow gnawer":
@@ -122,7 +126,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"Barbarian ({cls_level})")
 
                 # If bard
-                case "Bard":
+                case "BardLevel":
 
                     # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1:
@@ -137,7 +141,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"Bard ({cls_level})")
 
                 # If blood hunter
-                case "BloodHunter":
+                case "BloodHunterLevel":
 
                     # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1:
@@ -152,7 +156,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"Blood Hunter ({cls_level})")
 
                 # If monster hunter
-                case "MonsterHunter":
+                case "MonsterHunterLevel":
 
                     # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1:
@@ -167,7 +171,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"Monster Hunter ({cls_level})")
 
                 # If cleric
-                case "Cleric":
+                case "ClericLevel":
 
                     # If full subclass
                     if full_subclass_bool == 1:
@@ -178,7 +182,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} Cleric ({cls_level})")
 
                 # If druid
-                case "Druid":
+                case "DruidLevel":
 
                     # If at least level 2 and full subclass
                     if cls_level >= 2 and full_subclass_bool == 1:
@@ -200,7 +204,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append("Druid (1)")
 
                 # If monk
-                case "Monk":
+                case "MonkLevel":
 
                     # If at least level 3 and full subclass
                     if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]].lower() != "sheep dragon shepherd":
@@ -222,7 +226,7 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"Monk ({cls_level})")
 
                 # If paladin
-                case "Paladin":
+                case "PaladinLevel":
 
                     # If at least level 3, full subclass, and not oathbreaker
                     if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]].lower() != "oathbreaker":
@@ -244,11 +248,11 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                         class_list.append(f"Paladin ({cls_level})")
 
                 # If warlock
-                case "Warlock":
+                case "WarlockLevel":
                     class_list.append(f"{cvar_subclass_dict[result_key[0]]} Warlock ({cls_level})")
 
                 # If wizard
-                case "Wizard":
+                case "WizardLevel":
 
                     # If at least level 2, full subclass, and not bladesinger or war magic
                     if cls_level >= 2 and full_subclass_bool and cvar_subclass_dict[result_key[0]].lower() not in ["bladesinging", "war magic", "bladesinger", "blood magic", "force missile"]:
@@ -275,23 +279,26 @@ def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> s
                     else:
                         class_list.append("Wizard (1)")
 
-                # If other class
+                # If other class (or we received None/False for ClassLevel)
                 case _:
 
+                    # This is to ensure that there is only one "Level" in the ClassLevel
+                    result_key[0] = result_key[0].removesuffix("Level") + "Level"
+
                     # If at least level 3
-                    if cls_level >= 3:
+                    if cls_level >= 3 and cvar_subclass_dict[result_key[0]]:
                         class_list.append(f"{cvar_subclass_dict[result_key[0]]} {result_key[0].removesuffix('Level')} ({cls_level})")
 
                     # if not at least level 3
                     else:
-                        class_list.append(f"{result_key[0].split('Level')[0]} ({cls_level})")
+                        class_list.append(f"{result_key[0].removesuffix('Level')} ({cls_level})")
 
         # If no match
         else:
-            if player_cls == "blood":
+            if player_cls == "bloodhunter":
                 player_cls = "Blood Hunter"
 
-            if player_cls == "monster":
+            if player_cls == "monsterhunter":
                 player_cls = "Monster Hunter"
 
             class_list.append(f"{player_cls} ({cls_level})")
@@ -597,4 +604,4 @@ l = "<"
 -f "{{f}}"
 -thumb "{{thumb}}"
 -color "{{color}}"
--footer "{{ctx.prefix}}lfg {{l}}phrase> | 3/24/26 | ShadowsStride"
+-footer "{{ctx.prefix}}lfg {{l}}phrase> | 5/28/26 | ShadowsStride"
